@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// model Product {
+//   id        Int       @id @default(autoincrement())
+//   name      String
+//   category  String
+//   price     Float
+//   inStock   Boolean   @default(true)
+//   createdAt DateTime  @default(now())
+// }
+
+// model People {
+//   id         Int      @id @default(autoincrement())
+//   name       String   
+//   height     Float
+//   weight     Float 
+//   skills     String[]
+//   createdAt  DateTime @default(now())
+// }
+
+model User {
+  id            String    @id @default(cuid())
+  email         String?   @unique
+  emailVerified DateTime?
+  name          String?
+  image         String?
+  passwordHash  String?
+  createdAt     DateTime  @default(now())
+  isAdmin       Boolean   @default(false)
+  preferences   String[]  @default([])
+
+  sessions Session[]
+  posts    Post[]
+}
+
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Post {
+  id          String   @id @default(cuid())
+  title       String
+  body        String
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  published   Boolean  @default(false)
+
+  @@index([authorId, createdAt])
+  @@index([published, createdAt])
+}
+
+model VerificationToken {
+  identifier  String
+  token       String
+  expires     DateTime
+
+  @@unique([identifier, token])
+}
