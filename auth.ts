@@ -67,5 +67,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  // NextAuth v4 uses NEXTAUTH_SECRET. Accept AUTH_SECRET as a fallback so
+  // environments using the newer variable name keep working.
+  secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
 };

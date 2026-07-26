@@ -9,9 +9,10 @@ import { PrismaClient } from "../app/generated/prisma/client";
 const DEV_ADMIN_PASSWORD = "change-me-admin-please";
 
 // Fake companies — sample terms-of-service audits for the index.
-const AUDIT_POSTS: { title: string; body: string }[] = [
+const AUDIT_POSTS: { title: string; body: string; keywords: string[] }[] = [
   {
     title: "Audit — Nimbus Drive (Nimbus, Inc.): Terms of Service",
+    keywords: ["privacy","data rights","content ownership","data retention"],
     body: `Grade: D
 
 Nimbus Drive cloud storage — Terms of Service v8.2.
@@ -32,6 +33,7 @@ Verdict: Fine for non-sensitive files; keep anything private or irreplaceable ba
   },
   {
     title: "Audit — PulsePay (Pulse Financial LLC): User Agreement",
+    keywords: ["consumer rights","billing","arbitration","financial services"],
     body: `Grade: D-
 
 PulsePay wallet & payments — User Agreement, current version.
@@ -51,6 +53,7 @@ Verdict: Read the arbitration and fund-hold clauses carefully before keeping mea
   },
   {
     title: "Audit — Chatterbox (Chatterbox Labs): Terms & Privacy Policy",
+    keywords: ["privacy","tracking","data rights","content ownership"],
     body: `Grade: F
 
 Chatterbox social messaging — Terms of Service + Privacy Policy.
@@ -68,6 +71,7 @@ Verdict: Assume anything you post is permanent and monetized. Avoid for anything
   },
   {
     title: "Audit — FitStride Band (Strideworks Inc.): Terms of Service",
+    keywords: ["health data","location tracking","data rights","privacy"],
     body: `Grade: D-
 
 FitStride fitness band + app — Terms of Service and Health Data Policy.
@@ -88,6 +92,7 @@ Verdict: Sensitive data category. Turn off partner sharing in settings and expec
   },
   {
     title: "Audit — StreamNest (StreamNest Media Co.): Terms of Use",
+    keywords: ["billing","auto-renewal","refund policy","digital access"],
     body: `Grade: C-
 
 StreamNest streaming service — Terms of Use.

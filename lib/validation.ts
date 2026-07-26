@@ -18,6 +18,11 @@ export type SignupInput = z.infer<typeof signupSchema>;
 export const createPostSchema = z.object({
   title: z.string().trim().min(1, "A title is required.").max(200),
   body: z.string().trim().min(1, "Post content is required.").max(10_000),
+  keywords: z
+    .array(z.string().trim().min(1).max(40))
+    .min(1, "Add at least one keyword.")
+    .max(8, "Use no more than 8 keywords.")
+    .transform((keywords) => [...new Set(keywords.map((keyword) => keyword.toLowerCase()))]),
   published: z.boolean().default(true),
 });
 

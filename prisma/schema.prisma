@@ -45,7 +45,6 @@ model User {
   posts    Post[]
 }
 
-
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
@@ -56,22 +55,24 @@ model Session {
 }
 
 model Post {
-  id          String   @id @default(cuid())
-  title       String
-  body        String
-  authorId    String
-  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  published   Boolean  @default(false)
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  keywords  String[] @default([])
+  metadata  Json     @default("{}") @db.JsonB
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  published Boolean  @default(false)
 
   @@index([authorId, createdAt])
   @@index([published, createdAt])
 }
 
 model VerificationToken {
-  identifier  String
-  token       String
-  expires     DateTime
+  identifier String
+  token      String
+  expires    DateTime
 
   @@unique([identifier, token])
 }

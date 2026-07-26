@@ -10,13 +10,13 @@ export default async function Nav() {
   const user = session?.user;
 
   return (
-    <header className="border-b border-neutral-800 bg-neutral-950">
-      <nav className="mx-auto flex max-w-2xl items-center justify-between px-6 py-4">
-        <Link href="/" className="text-sm font-semibold tracking-tight text-white">
-          ToS Index
+    <header className="bg-[#08080a]">
+      <nav className="mx-auto flex max-w-[1540px] items-center justify-between px-4 py-5 sm:px-9 sm:py-7">
+        <Link href="/" className="text-lg font-semibold tracking-[-0.06em] text-white">
+          tos/index
         </Link>
 
-        <div className="flex items-center gap-3 text-sm">
+        <div className="flex items-center gap-2 text-sm">
           {user ? (
             <>
               {user.isAdmin ? (
@@ -29,13 +29,10 @@ export default async function Nav() {
             </>
           ) : (
             <>
-              <Link href="/login" className="font-medium text-white transition hover:text-neutral-300">
+              <Link href="/login" className="rounded-full border border-white/10 px-4 py-2 font-medium text-neutral-300 transition hover:bg-white/5 hover:text-white">
                 Log in
               </Link>
-              <Link
-                href="/signup"
-                className="rounded-lg bg-white px-3 py-1.5 font-semibold text-neutral-950 transition hover:bg-neutral-200"
-              >
+              <Link href="/signup" className="rounded-full bg-white px-4 py-2 font-semibold text-neutral-950 transition hover:bg-neutral-200">
                 Sign up
               </Link>
             </>

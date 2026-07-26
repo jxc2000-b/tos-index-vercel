@@ -26,6 +26,8 @@ export type Post = {
     id: string;
     title: string;
     body: string;
+    keywords: string[];
+    metadata: Record<string, unknown>;
     authorId: string;
     createdAt: string;
     published: boolean;

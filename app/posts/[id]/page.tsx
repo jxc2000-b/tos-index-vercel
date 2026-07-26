@@ -15,6 +15,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
       id: true,
       title: true,
       body: true,
+      keywords: true,
       createdAt: true,
       published: true,
       authorId: true,
@@ -54,6 +55,16 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
             </span>
           ) : null}
         </p>
+
+        {post.keywords.length > 0 ? (
+          <div className="mt-5 flex flex-wrap gap-2">
+            {post.keywords.map((keyword) => (
+              <span key={keyword} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-neutral-300">
+                {keyword}
+              </span>
+            ))}
+          </div>
+        ) : null}
 
         <div className="mt-6 whitespace-pre-wrap leading-relaxed text-neutral-200">{post.body}</div>
       </article>
