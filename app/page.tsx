@@ -4,8 +4,10 @@ import type { CSSProperties } from "react";
 
 import { authOptions } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { buildAuditVisualData } from "@/lib/audit-visual";
 
 import CreatePostForm from "./components/CreatePostForm";
+import RiskVisual from "./components/RiskVisual";
 
 const palettes = [
   { background: "#dfeee6", ink: "#14231d", accent: "#f25b3f" },
@@ -22,73 +24,17 @@ function hashString(value: string) {
   return [...value].reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) >>> 0, 0);
 }
 
-function postFacts(title: string, body: string) {
-  const grade = body.match(/Grade:\s*([^\n]+)/i)?.[1]?.trim() ?? "—";
+function postFacts(title: string, data: ReturnType<typeof buildAuditVisualData>) {
   const service = title.match(/Audit\s*[—–-]\s*([^(:]+)/i)?.[1]?.trim()
     ?? title.replace(/^Audit\s*[—–-]\s*/i, "");
-  const redFlags = body.match(/^\s*- /gm)?.length ?? 0;
-  const reasonable = body.match(/Reasonable\s*\n([\s\S]*?)(?:\n\n|Verdict:)/i)?.[1] ?? "";
-  const positives = reasonable.match(/^\s*- /gm)?.length ?? 0;
-  return { grade, service, redFlags, positives };
-}
-
-function RiskVisual({ seed, grade, redFlags }: { seed: number; grade: string; redFlags: number }) {
-  const variant = seed % 4;
-
-  if (variant === 0) {
-    return (
-      <div className="flex h-full items-end gap-2 px-6 pb-5 pt-12" aria-hidden="true">
-        {[42, 66, 52, 84, 61, 93].map((height, index) => (
-          <div key={index} className="flex-1 rounded-t-full bg-current opacity-80" style={{ height: `${height}%` }} />
-        ))}
-      </div>
-    );
-  }
-
-  if (variant === 1) {
-    return (
-      <div className="relative h-full" aria-hidden="true">
-        <div className="absolute left-1/2 top-1/2 h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-full border border-current opacity-20" />
-        <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border-[18px] border-current opacity-40" />
-        <div className="absolute left-1/2 top-1/2 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-current">
-          <span className="text-3xl font-semibold" style={{ color: "var(--card-bg)" }}>{grade}</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (variant === 2) {
-    return (
-      <div className="relative h-full overflow-hidden" aria-hidden="true">
-        {Array.from({ length: Math.max(4, redFlags + 2) }).map((_, index) => (
-          <span key={index} className="absolute block rounded-full border border-current" style={{
-            width: `${44 + index * 22}px`, height: `${44 + index * 22}px`,
-            left: `${10 + ((index * 19) % 58)}%`, top: `${6 + ((index * 23) % 62)}%`,
-            opacity: 0.18 + index * 0.06, transform: "translate(-50%, -50%)",
-          }} />
-        ))}
-      </div>
-    );
-  }
-
-  const points = "8,85 26,53 43,66 61,29 78,45 96,13";
-  return (
-    <svg viewBox="0 0 104 100" className="h-full w-full p-7" preserveAspectRatio="none" aria-hidden="true">
-      <path d={`M ${points} L 96 100 L 8 100 Z`} fill="currentColor" opacity=".17" />
-      <polyline points={points} fill="none" stroke="currentColor" strokeWidth="2" vectorEffect="non-scaling-stroke" />
-      {points.split(" ").map((point) => {
-        const [cx, cy] = point.split(",");
-        return <circle key={point} cx={cx} cy={cy} r="2.5" fill="currentColor" />;
-      })}
-    </svg>
-  );
+  return { grade: data.grade, service, redFlags: data.counts["red-flag"], positives: data.counts.reasonable };
 }
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
   const posts = await prisma.post.findMany({
     where: { published: true }, orderBy: { createdAt: "desc" }, take: 50,
-    select: { id: true, title: true, body: true, keywords: true, author: { select: { name: true, email: true } } },
+    select: { id: true, title: true, body: true, keywords: true, metadata: true, author: { select: { name: true, email: true } } },
   });
 
   return (
@@ -97,13 +43,13 @@ export default async function Home() {
         <div className="mx-auto max-w-[1540px]">
           <div className="mb-8 flex items-end justify-between px-1 sm:mb-12">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.24em] text-neutral-500">Community audits</p>
+              <p className="text-[11px] uppercase tracking-[0.24em] text-neutral-500">AUDITS</p>
               <h1 className="mt-2 max-w-xl text-balance text-2xl font-medium tracking-[-0.04em] text-neutral-100 sm:text-4xl">
-                The terms you agreed to, made visible.
+              A hub for organizing around the terms you agree to
               </h1>
             </div>
             <p className="hidden max-w-xs text-right text-sm leading-6 text-neutral-500 md:block">
-              Plain-language notes on ownership, privacy, payments, and the clauses worth noticing.
+              Plain-language notes on ownership, privacy, payments, and the clauses worth noticing, written by other users.
             </p>
           </div>
 
@@ -116,7 +62,8 @@ export default async function Home() {
               {posts.map((post) => {
                 const seed = hashString(post.id + post.title);
                 const palette = palettes[seed % palettes.length];
-                const facts = postFacts(post.title, post.body);
+                const visualData = buildAuditVisualData(post.body, post.metadata);
+                const facts = postFacts(post.title, visualData);
                 const style = {
                   minHeight: `${350 + (seed % 4) * 55}px`, background: palette.background, color: palette.ink,
                   "--card-bg": palette.background, "--card-accent": palette.accent,
@@ -127,7 +74,7 @@ export default async function Home() {
                     <Link href={`/posts/${post.id}`} style={style}
                       className="group relative flex overflow-hidden rounded-[3px] transition duration-500 hover:-translate-y-1 hover:brightness-105">
                       <div className="absolute inset-x-0 top-0 h-[67%] text-[var(--card-accent)] transition-transform duration-700 group-hover:scale-[1.025]">
-                        <RiskVisual seed={seed} grade={facts.grade} redFlags={facts.redFlags} />
+                        <RiskVisual description={visualData.description} variant={seed % 4} />
                       </div>
                       <div className="relative z-10 mt-auto w-full bg-gradient-to-t from-[var(--card-bg)] via-[var(--card-bg)]/95 to-transparent px-5 pb-5 pt-20">
                         <div className="mb-4 flex items-end justify-between gap-3 border-b border-current/15 pb-3">

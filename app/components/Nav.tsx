@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { authOptions } from "@/auth";
 
+import SectionSwitcherLink from "./SectionSwitcherLink";
 import SignOutButton from "./SignOutButton";
 
 export default async function Nav() {
@@ -12,9 +13,7 @@ export default async function Nav() {
   return (
     <header className="bg-[#08080a]">
       <nav className="mx-auto flex max-w-[1540px] items-center justify-between px-4 py-5 sm:px-9 sm:py-7">
-        <Link href="/" className="text-lg font-semibold tracking-[-0.06em] text-white">
-          tos/index
-        </Link>
+        <SectionSwitcherLink />
 
         <div className="flex items-center gap-2 text-sm">
           {user ? (

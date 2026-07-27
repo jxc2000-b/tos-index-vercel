@@ -8,3 +8,9 @@ body { font-family: Arial, Helvetica, sans-serif; }
   background: #e8ff70;
   color: #111;
 }
+
+.risk-visual { padding: clamp(1.35rem, 7%, 2.15rem); outline: none; transform-origin: center; transition: filter 280ms ease, opacity 280ms ease, transform 280ms ease; }
+.group:hover .risk-visual,
+.group:focus-visible .risk-visual { filter: saturate(1.08); transform: translateY(-2px) scale(1.012); }
+.group:focus-visible .risk-visual { opacity: .9; }
+@media (prefers-reduced-motion: reduce) { .risk-visual { transition: none; } }

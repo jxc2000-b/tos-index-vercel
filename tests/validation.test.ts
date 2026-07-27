@@ -36,7 +36,7 @@ describe("signupSchema", () => {
 
 describe("createPostSchema", () => {
   it("defaults published to true when omitted", () => {
-    const result = createPostSchema.safeParse({ title: "Hello", body: "Some body" });
+    const result = createPostSchema.safeParse({ title: "Hello", body: "Some body", keywords: ["Audit"] });
 
     expect(result.success).toBe(true);
     if (result.success) {
@@ -45,14 +45,23 @@ describe("createPostSchema", () => {
   });
 
   it("rejects a title that is empty after trimming", () => {
-    const result = createPostSchema.safeParse({ title: "   ", body: "Some body" });
+    const result = createPostSchema.safeParse({ title: "   ", body: "Some body", keywords: ["Audit"] });
 
     expect(result.success).toBe(false);
   });
 
   it("rejects a body over the length limit", () => {
-    const result = createPostSchema.safeParse({ title: "Hello", body: "a".repeat(10_001) });
+    const result = createPostSchema.safeParse({ title: "Hello", body: "a".repeat(10_001), keywords: ["Audit"] });
 
+    expect(result.success).toBe(false);
+  });
+  it("normalizes and deduplicates keywords", () => {
+    const result = createPostSchema.parse({ title: "Hello", body: "Body", keywords: [" Privacy ", "privacy", "DATA"] });
+    expect(result.keywords).toEqual(["privacy", "data"]);
+  });
+
+  it("rejects more than eight keywords", () => {
+    const result = createPostSchema.safeParse({ title: "Hello", body: "Body", keywords: Array.from({ length: 9 }, (_, i) => `tag-${i}`) });
     expect(result.success).toBe(false);
   });
 });
