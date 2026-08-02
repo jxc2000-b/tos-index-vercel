@@ -9,9 +9,9 @@ export default function SectionSwitcherLink() {
   return (
     <Link
       href={onIndex ? "/" : "/tos-index"}
-      className="text-lg font-semibold tracking-[-0.06em] text-white"
+      className="text-lg font-semibold tracking-[-0.06em] text-white underline decoration-1 underline-offset-4"
     >
-      {onIndex ? "go to audits" : "go to tos-index"}
+      {onIndex ? "go to audits" : "go to tos index"}
     </Link>
   );
 }

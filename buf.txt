@@ -1,0 +1,4 @@
+twice—once with the absolute path and once with the relative path. Both fail
+  before reading the file:
+
+  bwrap: loopback: Failed RTM_NEWADDR: Operation not permitted

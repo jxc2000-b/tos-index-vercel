@@ -48,3 +48,4 @@ next-env.d.ts
 .pnpm-store/
 docs/my-permissions.md
 .github/
+deploy/
