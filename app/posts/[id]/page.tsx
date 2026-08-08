@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { authOptions } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/format";
+import PostThumbnail from "@/app/components/PostThumbnail";
 
 export default async function PostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -40,7 +41,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
   return (
     <main className="mx-auto max-w-2xl px-6 py-12">
       <Link href="/" className="text-sm text-neutral-400 transition hover:text-neutral-200">
-        ← Back to index
+        ← Back to posts
       </Link>
 
       <article className="mt-6">
@@ -65,6 +66,10 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
             ))}
           </div>
         ) : null}
+
+        <div className="mt-8 max-w-lg">
+          <PostThumbnail title={post.title} keyword={post.keywords[0]} />
+        </div>
 
         <div className="mt-6 whitespace-pre-wrap leading-relaxed text-neutral-200">{post.body}</div>
       </article>

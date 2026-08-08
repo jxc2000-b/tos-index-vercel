@@ -54,7 +54,7 @@ export default function CreatePostForm({ userEmail }: { userEmail: string }) {
       onSubmit={handleCreatePost}
     >
       <div>
-        <h2 className="text-xl font-bold">Add an entry</h2>
+        <h2 className="text-xl font-bold">Create a post</h2>
         <p className="mt-1 text-sm text-neutral-400">Posting as {userEmail}.</p>
       </div>
 
@@ -76,14 +76,14 @@ export default function CreatePostForm({ userEmail }: { userEmail: string }) {
           maxLength={250}
           value={keywords}
           onChange={(event) => setKeywords(event.target.value)}
-          placeholder="privacy-focused, data rights, arbitration"
+          placeholder="privacy basics, browsers, data rights"
           className="rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-white outline-none placeholder:text-neutral-600 focus:border-neutral-400"
         />
         <span className="text-xs font-normal text-neutral-500">Separate up to 8 keywords with commas.</span>
       </label>
 
       <label className="grid gap-2 text-sm font-medium text-neutral-300">
-        Notes
+        Post
         <textarea
           required
           maxLength={10_000}
@@ -102,7 +102,7 @@ export default function CreatePostForm({ userEmail }: { userEmail: string }) {
         disabled={isSubmitting}
         className="rounded-lg bg-white px-4 py-2 font-semibold text-neutral-950 transition hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {isSubmitting ? "Publishing..." : "Publish entry"}
+        {isSubmitting ? "Publishing..." : "Publish post"}
       </button>
     </form>
   );
